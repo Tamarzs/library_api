@@ -33,7 +33,7 @@ SECRET_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9eyJzdWIiOiJ0YW1hcnoiLCJpZCI6MS
 ALGORITHM = 'HS256'
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
+oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/login')
 
 
 def authenticate_user(username: str, password: str, db):
@@ -69,16 +69,16 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
-@router.post('/create', status_code=status.HTTP_201_CREATED, response_model=TokenModel)
-async def create_user(db: db_dependency, user: user_dependency, created_user: UserModel):
+@router.post('/create', status_code=status.HTTP_201_CREATED)
+async def create_user(db: db_dependency,user: user_dependency, created_user: UserModel):
 
-    # if not user:
-        # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not authenticated.')
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not authenticated.')
 
     verify = db.query(Users).filter(Users.id == user.get('id')).first()
 
-    # if verify.role != "admin":
-        # raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Access denied.')
+    if verify.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Access denied.')
 
     created_user = Users (
 
