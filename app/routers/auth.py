@@ -75,9 +75,12 @@ async def create_user(db: db_dependency,user: user_dependency, created_user: Use
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not authenticated.')
 
-    verify = db.query(Users).filter(Users.id == user.get('id')).first()
+    verify_user = db.query(Users).filter(Users.id == user.get('id')).first()
 
-    if verify.role != "admin":
+    if not verify_user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden.")
+
+    if verify_user.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Access denied.')
 
     created_user = Users (
