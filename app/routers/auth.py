@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from app.database.settings import SessionLocal
-from app.assets.models import TokenModel
+from app.assets.models import TokenModel, UserModel
 from app.assets.tables import Users
 
 from passlib.context import CryptContext
@@ -69,7 +69,31 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
-@router.get('/login', response_model=TokenModel, status_code=status.HTTP_200_OK)
+@router.post('/create', status_code=status.HTTP_201_CREATED, response_model=TokenModel)
+async def create_user(db: db_dependency, user: user_dependency, created_user: UserModel):
+
+    # if not user:
+        # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Not authenticated.')
+
+    verify = db.query(Users).filter(Users.id == user.get('id')).first()
+
+    # if verify.role != "admin":
+        # raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Access denied.')
+
+    created_user = Users (
+
+        username = created_user.username,
+        email = created_user.email,
+        hashed_password = bcrypt_context.hash(created_user.password),
+        role = created_user.role,
+
+    )
+
+    db.add(created_user)
+    db.commit()
+
+
+@router.post('/login', response_model=TokenModel, status_code=status.HTTP_200_OK)
 async def login(form_data : Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
 
     user = authenticate_user(username=form_data.username, password=form_data.password, db=db)

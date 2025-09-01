@@ -1,16 +1,17 @@
 version: "3.9"
+
 services:
   web:
     build: .
     container_name: library_api
     ports:
       - "8000:8000"
+    depends_on:
+      - db
     volumes:
       - .:/app
     environment:
-      - ENV=development
-    depends_on:
-      - db
+      - DATABASE_URL=postgresql+psycopg2://tama:12345678@db:5432/library
 
   db:
     image: postgres:15
