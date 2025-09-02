@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta, timezone
+
 from app.database.settings import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 
@@ -11,6 +13,7 @@ class Users(Base):
     hashed_password = Column(String)
     role = Column(String)
     is_active = Column(Boolean, default=True)
+    borrowed_books = Column(Integer, default=0)
 
 
 class Books(Base):
@@ -27,8 +30,10 @@ class Books(Base):
 class Borrows(Base):
     __tablename__ = 'borrows'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    borrow_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey('users.id'))
     book_id = Column(Integer, ForeignKey('books.id'))
-    borrow_date = Column(String)
-    return_date = Column(String)
+    book_title = Column(String)
+    book_author = Column(String)
+    borrow_date = Column(String, default=datetime.now(timezone.utc))
+    return_date = Column(String, default=datetime.now(timezone.utc) + timedelta(days=5))
