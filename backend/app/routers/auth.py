@@ -6,9 +6,9 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from starlette import status
 
-from app.database.settings import SessionLocal
-from app.assets.models import TokenModel, UserModel
-from app.assets.tables import Users
+from ...app.database.settings import SessionLocal
+from ...app.assets.models import TokenModel, UserModel
+from ...app.assets.tables import Users
 
 from passlib.context import CryptContext
 from jose import jwt, JWTError

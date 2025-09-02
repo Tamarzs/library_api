@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from app.database.settings import Base
+from ...app.database.settings import (Base)
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 
 

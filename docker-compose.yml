@@ -2,16 +2,26 @@ version: "3.9"
 
 services:
   web:
-    build: .
+    build: ./backend
     container_name: library_api
     ports:
       - "8000:8000"
     depends_on:
       - db
     volumes:
-      - .:/app
+      - ./backend:/app
     environment:
       - DATABASE_URL=postgresql+psycopg2://tama:12345678@db:5432/library
+
+  frontend:
+    build: ./frontend
+    container_name: library_frontend
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./frontend:/app
+    stdin_open: true
+    tty: true
 
   db:
     image: postgres:15

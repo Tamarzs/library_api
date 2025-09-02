@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from .auth import get_db, get_current_user
-from app.assets.tables import Borrows, Books, Users
+from ...app.assets.tables import Borrows, Books, Users
 
 router = APIRouter(
     tags=["Borrows"],
