@@ -39,7 +39,7 @@ async def get_all_users(db: db_dependency, user: user_dependency):
     return db.query(Users).filter(Users.is_active == True).all()
 
 
-@router.get("/{username}", status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK)
 async def get_user(db: db_dependency, user: user_dependency, username: str):
 
     if not user:
@@ -60,7 +60,7 @@ async def get_user(db: db_dependency, user: user_dependency, username: str):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found.")
 
 
-@router.put("/{username}", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("", status_code=status.HTTP_204_NO_CONTENT)
 async def update_user(db: db_dependency, user: user_dependency, updated_user: UserModel, username: str):
 
     if not user:
@@ -90,7 +90,7 @@ async def update_user(db: db_dependency, user: user_dependency, updated_user: Us
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User not found.")
 
 
-@router.delete("/{username}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(db: db_dependency, user: user_dependency, username: str):
 
     if not user:

@@ -18,7 +18,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(get_current_user)]
 
 
-@router.get("", status_code=status.HTTP_200_OK)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def borrow_book(db: db_dependency, user: user_dependency, book_id: int):
 
     if not user:
@@ -57,8 +57,10 @@ async def borrow_book(db: db_dependency, user: user_dependency, book_id: int):
     db.add(borrow)
     db.commit()
 
+    return db.query(Borrows).filter(Borrows.user_id == user.get('id')).first()
 
-@router.get("/", status_code=status.HTTP_200_OK)
+
+@router.post("/", status_code=status.HTTP_204_NO_CONTENT)
 async def return_book(db: db_dependency, user: user_dependency, book_id: int):
 
     if not user:
@@ -78,10 +80,10 @@ async def return_book(db: db_dependency, user: user_dependency, book_id: int):
         db.delete(user_borrow)
         db.commit()
     else:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found.")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="You have not borrowed this book.")
 
 
-@router.get("/my", status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 async def get_borrows(db: db_dependency, user: user_dependency):
 
     if not user:
